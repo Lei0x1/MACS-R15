@@ -1,0 +1,26 @@
+# Project place file
+/MACS R15.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+# Roblox files
+roblox.yml
+
+sourcemap.json
+
+# Packages
+Packages/
+
+# Wally
+wally.lock
+
+# Asset
+Asset/
+
+# Helper
+Helper/
+
+# Bitbucket
+Bitbucket/

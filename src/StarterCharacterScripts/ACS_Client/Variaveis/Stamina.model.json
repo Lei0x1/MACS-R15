@@ -1,0 +1,8 @@
+{
+    "ClassName": "DoubleConstrainedValue",
+    "properties": {
+        "MaxValue": 1000,
+        "MinValue": 0,
+        "Value": 1000
+    }
+}
