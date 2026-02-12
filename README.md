@@ -96,9 +96,7 @@ When contributing to this project:
 
 ## License
 
-This project is built on top of ACS 2.0.0 and incorporates multiple community modules.
-
-Respect original authorship and licensing terms.
+This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## Credits
 
