@@ -6,7 +6,7 @@ local SKP_4 = MD.Events.MedSys
 local SKP_5 = {"342190005"; "342190012"; "342190017"; "342190024";} -- Bullet Whizz
 local SKP_00 = require(game.ReplicatedStorage.ACS_Engine.GameRules:WaitForChild("Config"))
 game.Workspace.CurrentCamera:ClearAllChildren()
-local FX = game.ReplicatedStorage.ACS_Engine.FX.MedSys
+local FX = game.ReplicatedStorage.ACS_Engine.FX.VisualFX.MedSys
 
 local SKP_6 = game:GetService("StarterGui")
 SKP_6:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, SKP_00.CoreGuiPlayerList)

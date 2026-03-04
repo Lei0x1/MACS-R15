@@ -1,14 +1,13 @@
 --[[
 	InputSystem.lua
-	
-	Input dispatcher with full gamepad support
-	
 	Created by @ddydddd9 - Moonlight
+
+	Core input dispatcher with gamepad support, action binding,
+	and listener management for unified input handling
 ]]
 
 local UserInputService = game:GetService("UserInputService")
 local ContextActionService = game:GetService("ContextActionService")
-local RunService = game:GetService("RunService")
 
 local InputSystem = {}
 InputSystem.__index = InputSystem
@@ -32,6 +31,21 @@ local function FireAxis(action, vector, input)
 end
 
 function InputSystem.Bind(action, inputs)
+	if Binds[action] then
+		warn("Action '" .. action .. "' is already bound. Unbind it first.")
+		return
+	end
+
+	for _, input in ipairs(inputs) do
+		for existing_action, existing_inputs in pairs(Binds) do
+			for _, ex_input in ipairs(existing_inputs) do
+				if ex_input == input then
+					warn(string.format("[InputSystem] Input '%s' is already bound to action '%s'", tostring(input), existing_action))
+				end
+			end
+		end
+	end
+
 	ContextActionService:BindAction(action, function(_, state, input)
 		Fire(action, state, input)
 		return Enum.ContextActionResult.Sink

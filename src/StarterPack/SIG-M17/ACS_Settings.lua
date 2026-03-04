@@ -5,7 +5,7 @@ self.SlideEx 		= CFrame.new(0,0,-0.3)
 self.SlideLock 		= true
 
 self.canAim 		= true
-self.Zoom 			= 70
+self.Zoom 			= 60
 self.Zoom2 			= 90
 
 self.gunName 		= script.Parent.Name

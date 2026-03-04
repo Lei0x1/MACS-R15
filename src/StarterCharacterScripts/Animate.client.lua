@@ -1,7 +1,7 @@
 local RS = game:GetService("ReplicatedStorage")
 local ACS_Engine = RS:WaitForChild("ACS_Engine")
 local Event = ACS_Engine:WaitForChild("Events"):WaitForChild("Animation")
-local Animation = ACS_Engine:WaitForChild("Animation"):WaitForChild("Default")
+local Animation = ACS_Engine:WaitForChild("Animation"):WaitForChild("Movement")
 
 local Character = script.Parent
 local Humanoid = Character:WaitForChild("Humanoid")
@@ -32,7 +32,7 @@ local runAnimKeyframeHandler = nil
 local PreloadedAnims = {}
 
 local animTable = {}
-local animNames = { 
+local animNames = {
 	idle = 	{	
 				{ id = "http://www.roblox.com/asset/?id=507766666", weight = 1 },
 				{ id = "http://www.roblox.com/asset/?id=507766951", weight = 1 },
@@ -81,7 +81,7 @@ local emoteNames = { wave = false, point = false, dance = true, dance2 = true, d
 
 math.randomseed(tick())
 
-function findExistingAnimationInSet(set, anim)
+function FindExistingAnimationInSet(set, anim)
 	if set == nil or anim == nil then
 		return 0
 	end
@@ -95,10 +95,10 @@ function findExistingAnimationInSet(set, anim)
 	return 0
 end
 
-function configureAnimationSet(name, fileList)
+function ConfigureAnimationSet(name, fileList)
 	if (animTable[name] ~= nil) then
 		for _, connection in pairs(animTable[name].connections) do
-			connection:disconnect()
+			connection:Disconnect()
 		end
 	end
 	animTable[name] = {}
@@ -116,8 +116,8 @@ function configureAnimationSet(name, fileList)
 	-- check for config values
     local config = Animation:FindFirstChild(name)
 	if (allowCustomAnimations and config ~= nil) then
-		table.insert(animTable[name].connections, config.ChildAdded:connect(function(child) configureAnimationSet(name, fileList) end))
-		table.insert(animTable[name].connections, config.ChildRemoved:connect(function(child) configureAnimationSet(name, fileList) end))
+		table.insert(animTable[name].connections, config.ChildAdded:connect(function(child) ConfigureAnimationSet(name, fileList) end))
+		table.insert(animTable[name].connections, config.ChildRemoved:connect(function(child) ConfigureAnimationSet(name, fileList) end))
 		
 		local idx = 0
 		for _, childPart in pairs(config:GetChildren()) do
@@ -133,9 +133,9 @@ function configureAnimationSet(name, fileList)
 				animTable[name][idx].anim = childPart
 				animTable[name][idx].weight = newWeight
 				animTable[name].totalWeight = animTable[name].totalWeight + animTable[name][idx].weight
-				table.insert(animTable[name].connections, childPart.Changed:connect(function(property) configureAnimationSet(name, fileList) end))
-				table.insert(animTable[name].connections, childPart.ChildAdded:connect(function(property) configureAnimationSet(name, fileList) end))
-				table.insert(animTable[name].connections, childPart.ChildRemoved:connect(function(property) configureAnimationSet(name, fileList) end))
+				table.insert(animTable[name].connections, childPart.Changed:connect(function(property) ConfigureAnimationSet(name, fileList) end))
+				table.insert(animTable[name].connections, childPart.ChildAdded:connect(function(property) ConfigureAnimationSet(name, fileList) end))
+				table.insert(animTable[name].connections, childPart.ChildRemoved:connect(function(property) ConfigureAnimationSet(name, fileList) end))
 			end
 		end
 	end
@@ -166,7 +166,7 @@ end
 
 ------------------------------------------------------------------------------------------------------------
 
-function configureAnimationSetOld(name, fileList)
+function ConfigureAnimationSetOld(name, fileList)
 	if (animTable[name] ~= nil) then
 		for _, connection in pairs(animTable[name].connections) do
 			connection:disconnect()
@@ -187,12 +187,12 @@ function configureAnimationSetOld(name, fileList)
 	-- check for config values
     local config = Animation:FindFirstChild(name)
 	if (allowCustomAnimations and config ~= nil) then
-		table.insert(animTable[name].connections, config.ChildAdded:connect(function(child) configureAnimationSet(name, fileList) end))
-		table.insert(animTable[name].connections, config.ChildRemoved:connect(function(child) configureAnimationSet(name, fileList) end))
+		table.insert(animTable[name].connections, config.ChildAdded:connect(function(child) ConfigureAnimationSet(name, fileList) end))
+		table.insert(animTable[name].connections, config.ChildRemoved:connect(function(child) ConfigureAnimationSet(name, fileList) end))
 		local idx = 1
 		for _, childPart in pairs(config:GetChildren()) do
 			if (childPart:IsA("Animation")) then
-				table.insert(animTable[name].connections, childPart.Changed:connect(function(property) configureAnimationSet(name, fileList) end))
+				table.insert(animTable[name].connections, childPart.Changed:connect(function(property) ConfigureAnimationSet(name, fileList) end))
 				animTable[name][idx] = {}
 				animTable[name][idx].anim = childPart
 				local weightObject = childPart:FindFirstChild("Weight")
@@ -234,16 +234,16 @@ end
 function scriptChildModified(child)
 	local fileList = animNames[child.Name]
 	if (fileList ~= nil) then
-		configureAnimationSet(child.Name, fileList)
+		ConfigureAnimationSet(child.Name, fileList)
 	end	
 end
 
-script.ChildAdded:connect(scriptChildModified)
-script.ChildRemoved:connect(scriptChildModified)
+script.ChildAdded:Connect(scriptChildModified)
+script.ChildRemoved:Connect(scriptChildModified)
 
 
 for name, fileList in pairs(animNames) do 
-	configureAnimationSet(name, fileList)
+	ConfigureAnimationSet(name, fileList)
 end	
 
 -- ANIMATION
@@ -262,7 +262,7 @@ local currentlyPlayingEmote = false
 
 -- functions
 
-function stopAllAnimations()
+function StopAllAnimations()
 	local oldAnim = currentAnim
 
 	-- return to idle if finishing an emote
@@ -301,7 +301,7 @@ function stopAllAnimations()
 	return oldAnim
 end
 
-function getHeightScale()
+function GetHeightScale()
 	if Humanoid then
 		if not Humanoid.AutomaticScalingEnabled then
 			return 1
@@ -320,9 +320,9 @@ function getHeightScale()
 end
 
 local smallButNotZero = 0.0001
-function setRunSpeed(speed)
+function SetRunSpeed(speed)
 	local speedScaled = speed * 1
-	local heightScale = getHeightScale()
+	local heightScale = GetHeightScale()
 	local runSpeed = speedScaled / heightScale
 
 	if runSpeed ~= currentAnimSpeed then
@@ -343,9 +343,9 @@ function setRunSpeed(speed)
 	end	
 end
 
-function setAnimationSpeed(speed)
+function SetAnimationSpeed(speed)
 	if currentAnim == "walk" then
-			setRunSpeed(speed)
+			SetRunSpeed(speed)
 	else
 		if speed ~= currentAnimSpeed then
 			currentAnimSpeed = speed
@@ -354,7 +354,7 @@ function setAnimationSpeed(speed)
 	end
 end
 
-function keyFrameReachedFunc(frameName)
+function KeyFrameReachedFunc(frameName)
 	if (frameName == "End") then
 		if currentAnim == "walk" then
 			if userNoUpdateOnLoop == true then
@@ -386,13 +386,13 @@ function keyFrameReachedFunc(frameName)
 			end
 			
 			local animSpeed = currentAnimSpeed
-			playAnimation(repeatAnim, 0.15, Humanoid)
-			setAnimationSpeed(animSpeed)
+			PlayAnimation(repeatAnim, 0.15, Humanoid)
+			SetAnimationSpeed(animSpeed)
 		end
 	end
 end
 
-function rollAnimation(animName)
+function RollAnimation(animName)
 	local roll = math.random(1, animTable[animName].totalWeight) 
 	local origRoll = roll
 	local idx = 1
@@ -403,7 +403,7 @@ function rollAnimation(animName)
 	return idx
 end
 
-local function switchToAnim(anim, animName, transitionTime, humanoid)
+local function SwitchToAnim(anim, animName, transitionTime, humanoid)
 	-- switch animation		
 	if (anim ~= currentAnimInstance) then
 		
@@ -435,12 +435,12 @@ local function switchToAnim(anim, animName, transitionTime, humanoid)
 		if (currentAnimKeyframeHandler ~= nil) then
 			currentAnimKeyframeHandler:disconnect()
 		end
-		currentAnimKeyframeHandler = currentAnimTrack.KeyframeReached:connect(keyFrameReachedFunc)
+		currentAnimKeyframeHandler = currentAnimTrack.KeyframeReached:connect(KeyFrameReachedFunc)
 		
 		-- check to see if we need to blend a walk/run animation
 		if animName == "walk" then
 			local runAnimName = "run"
-			local runIdx = rollAnimation(runAnimName)
+			local runIdx = RollAnimation(runAnimName)
 
 			runAnimTrack = humanoid:LoadAnimation(animTable[runAnimName][runIdx].anim)
 			runAnimTrack.Priority = Enum.AnimationPriority.Core
@@ -449,21 +449,21 @@ local function switchToAnim(anim, animName, transitionTime, humanoid)
 			if (runAnimKeyframeHandler ~= nil) then
 				runAnimKeyframeHandler:disconnect()
 			end
-			runAnimKeyframeHandler = runAnimTrack.KeyframeReached:connect(keyFrameReachedFunc)	
+			runAnimKeyframeHandler = runAnimTrack.KeyframeReached:connect(KeyFrameReachedFunc)	
 		end
 	end
 end
 
-function playAnimation(animName, transitionTime, humanoid) 	
-	local idx = rollAnimation(animName)
+function PlayAnimation(animName, transitionTime, humanoid) 	
+	local idx = RollAnimation(animName)
 	local anim = animTable[animName][idx].anim
 
-	switchToAnim(anim, animName, transitionTime, humanoid)
+	SwitchToAnim(anim, animName, transitionTime, humanoid)
 	currentlyPlayingEmote = false
 end
 
-function playEmote(emoteAnim, transitionTime, humanoid)
-	switchToAnim(emoteAnim, emoteAnim.Name, transitionTime, humanoid)
+function PlayEmote(emoteAnim, transitionTime, humanoid)
+	SwitchToAnim(emoteAnim, emoteAnim.Name, transitionTime, humanoid)
 	currentlyPlayingEmote = true
 end
 
@@ -475,15 +475,15 @@ local toolAnimTrack = nil
 local toolAnimInstance = nil
 local currentToolAnimKeyframeHandler = nil
 
-function toolKeyFrameReachedFunc(frameName)
+function ToolKeyFrameReachedFunc(frameName)
 	if (frameName == "End") then
-		playToolAnimation(toolAnimName, 0.0, Humanoid)
+		PlayToolAnimation(toolAnimName, 0.0, Humanoid)
 	end
 end
 
 
-function playToolAnimation(animName, transitionTime, humanoid, priority)	 		
-		local idx = rollAnimation(animName)
+function PlayToolAnimation(animName, transitionTime, humanoid, priority)	 		
+		local idx = RollAnimation(animName)
 		local anim = animTable[animName][idx].anim
 
 		if (toolAnimInstance ~= anim) then
@@ -505,11 +505,11 @@ function playToolAnimation(animName, transitionTime, humanoid, priority)
 			toolAnimName = animName
 			toolAnimInstance = anim
 
-			currentToolAnimKeyframeHandler = toolAnimTrack.KeyframeReached:connect(toolKeyFrameReachedFunc)
+			currentToolAnimKeyframeHandler = toolAnimTrack.KeyframeReached:connect(ToolKeyFrameReachedFunc)
 		end
 end
 
-function stopToolAnimations()
+function StopToolAnimations()
 	local oldAnim = toolAnimName
 
 	if (currentToolAnimKeyframeHandler ~= nil) then
@@ -531,93 +531,93 @@ end
 -------------------------------------------------------------------------------------------
 -- STATE CHANGE HANDLERS
 
-function onRunning(speed)	
+function OnRunning(speed)	
 	if speed > 0.75 then
 		local scale = 22.0
-		playAnimation("walk", 0.2, Humanoid)
-		setAnimationSpeed(speed / scale)
+		PlayAnimation("walk", 0.2, Humanoid)
+		SetAnimationSpeed(speed / scale)
 		pose = "Running"
 	else
 		if emoteNames[currentAnim] == nil and not currentlyPlayingEmote then
-			playAnimation("idle", 0.2, Humanoid)
+			PlayAnimation("idle", 0.2, Humanoid)
 			pose = "Standing"
 		end
 	end
 end
 
-function onDied()
+function OnDied()
 	pose = "Dead"
 end
 
-function onJumping()
-	playAnimation("jump", 0.1, Humanoid)
+function OnJumping()
+	PlayAnimation("jump", 0.1, Humanoid)
 	jumpAnimTime = jumpAnimDuration
 	pose = "Jumping"
 end
 
-function onClimbing(speed)
+function OnClimbing(speed)
 	local scale = 5.0
-	playAnimation("climb", 0.1, Humanoid)
-	setAnimationSpeed(speed / scale)
+	PlayAnimation("climb", 0.1, Humanoid)
+	SetAnimationSpeed(speed / scale)
 	pose = "Climbing"
 end
 
-function onGettingUp()
+function OnGettingUp()
 	pose = "GettingUp"
 end
 
-function onFreeFall()
+function OnFreeFall()
 	if (jumpAnimTime <= 0) then
-		playAnimation("fall", fallTransitionTime, Humanoid)
+		PlayAnimation("fall", fallTransitionTime, Humanoid)
 	end
 	pose = "FreeFall"
 end
 
-function onFallingDown()
+function OnFallingDown()
 	pose = "FallingDown"
 end
 
-function onSeated()
+function OnSeated()
 	pose = "Seated"
 end
 
-function onPlatformStanding()
+function OnPlatformStanding()
 	pose = "PlatformStanding"
 end
 
 -------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------
 
-function onSwimming(speed)
+function OnSwimming(speed)
 	if speed > 1.00 then
 		local scale = 10.0
-		playAnimation("swim", 0.4, Humanoid)
-		setAnimationSpeed(speed / scale)
+		PlayAnimation("swim", 0.4, Humanoid)
+		SetAnimationSpeed(speed / scale)
 		pose = "Swimming"
 	else
-		playAnimation("swimidle", 0.4, Humanoid)
+		PlayAnimation("swimidle", 0.4, Humanoid)
 		pose = "Standing"
 	end
 end
 
-function animateTool()
+function AnimateTool()
 	if (toolAnim == "None") then
-		playToolAnimation("toolnone", toolTransitionTime, Humanoid, Enum.AnimationPriority.Idle)
+		PlayToolAnimation("toolnone", toolTransitionTime, Humanoid, Enum.AnimationPriority.Idle)
 		return
 	end
 
 	if (toolAnim == "Slash") then
-		playToolAnimation("toolslash", 0, Humanoid, Enum.AnimationPriority.Action)
+		PlayToolAnimation("toolslash", 0, Humanoid, Enum.AnimationPriority.Action)
 		return
 	end
 
 	if (toolAnim == "Lunge") then
-		playToolAnimation("toollunge", 0, Humanoid, Enum.AnimationPriority.Action)
+		PlayToolAnimation("toollunge", 0, Humanoid, Enum.AnimationPriority.Action)
 		return
 	end
 end
 
-function getToolAnim(tool)
+function GetToolAnim(tool)
 	for _, c in ipairs(tool:GetChildren()) do
 		if c.Name == "toolanim" and c.className == "StringValue" then
 			return c
@@ -628,7 +628,7 @@ end
 
 local lastTick = 0
 
-function stepAnimate(currentTime)
+function StepAnimate(currentTime)
 	local amplitude = 1
 	local frequency = 1
   	local deltaTime = currentTime - lastTick
@@ -642,14 +642,14 @@ function stepAnimate(currentTime)
   	end
 
 	if (pose == "FreeFall" and jumpAnimTime <= 0) then
-		playAnimation("fall", fallTransitionTime, Humanoid)
+		PlayAnimation("fall", fallTransitionTime, Humanoid)
 	elseif (pose == "Seated") then
-		playAnimation("sit", 0.5, Humanoid)
+		PlayAnimation("sit", 0.5, Humanoid)
 		return
 	elseif (pose == "Running") then
-		playAnimation("walk", 0.2, Humanoid)
+		PlayAnimation("walk", 0.2, Humanoid)
 	elseif (pose == "Dead" or pose == "GettingUp" or pose == "FallingDown" or pose == "Seated" or pose == "PlatformStanding") then
-		stopAllAnimations()
+		StopAllAnimations()
 		amplitude = 0.1
 		frequency = 1
 		setAngles = true
@@ -658,7 +658,7 @@ function stepAnimate(currentTime)
 	-- Tool Animation handling
 	local tool = Character:FindFirstChildOfClass("Tool")
 	if tool and tool:FindFirstChild("Handle") then
-		local animStringValueObject = getToolAnim(tool)
+		local animStringValueObject = GetToolAnim(tool)
 
 		if animStringValueObject then
 			toolAnim = animStringValueObject.Value
@@ -672,9 +672,9 @@ function stepAnimate(currentTime)
 			toolAnim = "None"
 		end
 
-		animateTool()		
+		AnimateTool()		
 	else
-		stopToolAnimations()
+		StopToolAnimations()
 		toolAnim = "None"
 		toolAnimInstance = nil
 		toolAnimTime = 0
@@ -682,16 +682,16 @@ function stepAnimate(currentTime)
 end
 
 -- connect events
-Humanoid.Died:connect(onDied)
-Humanoid.Running:connect(onRunning)
-Humanoid.Jumping:connect(onJumping)
-Humanoid.Climbing:connect(onClimbing)
-Humanoid.GettingUp:connect(onGettingUp)
-Humanoid.FreeFalling:connect(onFreeFall)
-Humanoid.FallingDown:connect(onFallingDown)
-Humanoid.Seated:connect(onSeated)
-Humanoid.PlatformStanding:connect(onPlatformStanding)
-Humanoid.Swimming:connect(onSwimming)
+Humanoid.Died:connect(OnDied)
+Humanoid.Running:connect(OnRunning)
+Humanoid.Jumping:connect(OnJumping)
+Humanoid.Climbing:connect(OnClimbing)
+Humanoid.GettingUp:connect(OnGettingUp)
+Humanoid.FreeFalling:connect(OnFreeFall)
+Humanoid.FallingDown:connect(OnFallingDown)
+Humanoid.Seated:connect(OnSeated)
+Humanoid.PlatformStanding:connect(OnPlatformStanding)
+Humanoid.Swimming:connect(OnSwimming)
 
 -- setup emote chat hook
 game:GetService("Players").LocalPlayer.Chatted:connect(function(msg)
@@ -703,7 +703,7 @@ game:GetService("Players").LocalPlayer.Chatted:connect(function(msg)
 	end
 	
 	if (pose == "Standing" and emoteNames[emote] ~= nil) then
-		playAnimation(emote, EMOTE_TRANSITION_TIME, Humanoid)
+		PlayAnimation(emote, EMOTE_TRANSITION_TIME, Humanoid)
 	end
 end)
 
@@ -717,12 +717,12 @@ if FFlagAnimateScriptEmoteHook then
 	
 		if emoteNames[emote] ~= nil then
 			-- Default emotes
-			playAnimation(emote, EMOTE_TRANSITION_TIME, Humanoid)
+			PlayAnimation(emote, EMOTE_TRANSITION_TIME, Humanoid)
 			
 			return true
 		elseif typeof(emote) == "Instance" and emote:IsA("Animation") then
 			-- Non-default emotes
-			playEmote(emote, EMOTE_TRANSITION_TIME, Humanoid)
+			PlayEmote(emote, EMOTE_TRANSITION_TIME, Humanoid)
 			return true
 		end
 		
@@ -732,12 +732,12 @@ if FFlagAnimateScriptEmoteHook then
 end
 
 -- initialize to idle
-playAnimation("idle", 0.1, Humanoid)
+PlayAnimation("idle", 0.1, Humanoid)
 pose = "Standing"
 
 -- loop to handle timed state transitions and tool animations
 while Character.Parent ~= nil do
 	local _, currentGameTime = wait(0.1)
-	stepAnimate(currentGameTime)
+	StepAnimate(currentGameTime)
 end
 

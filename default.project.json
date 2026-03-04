@@ -18,6 +18,10 @@
       "$path": "src/ServerScriptService"
     },
 
+    "StarterGui": {
+      "$path": "src/StarterGui"
+    },
+
     "StarterPack": {
       "$path": "src/StarterPack"
     },

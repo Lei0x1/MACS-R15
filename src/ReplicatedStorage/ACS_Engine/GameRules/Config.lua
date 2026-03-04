@@ -11,6 +11,8 @@ local ServerConfig = {
 	,AntiBunnyHop = true				--- Enable anti bunny hop system?
 	,JumpCoolDown = 1.5					--- Seconds before you can jump again
 	,JumpPower = 50						--- Jump power, default is 50
+	,LeanAutomaticRecovery = true
+	,WeaponAimAutomaticRecovery = true
 	
 	,RealisticLaser = true				--- True = Laser line is invisible
 	,ReplicatedLaser = true				
@@ -31,11 +33,11 @@ local ServerConfig = {
 ------------------=[ Status UI ]=-------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 	,EnableStatusUI 	= true				--- Don't disabled it...
-	,RunWalkSpeed 		= 24
+	,RunWalkSpeed 		= 19
 	,NormalWalkSpeed 	= 12
-	,SlowPaceWalkSpeed 	= 6	
-	,CrouchWalkSpeed 	= 6
-	,ProneWalksSpeed 	= 3
+	,SlowPaceWalkSpeed 	= 8
+	,CrouchWalkSpeed 	= 8
+	,ProneWalksSpeed 	= 4
 	
 	,InjuredWalksSpeed 		= 8
 	,InjuredCrouchWalkSpeed = 4
@@ -84,11 +86,17 @@ local ServerConfig = {
 	,Blacklist = {1363303139, 112962460, 115267378, 496075583} 		--- Auto kick the player (via ID) when he tries to join
 	
 	,Version = "ACS 2.0 - R15"
+	,ModdedVersion = "MACS R15 0.2.0"
 ----------------------------------------------------------------------------------------------------
 --------------------=[ RCM ]=--------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 	,ShellLimit = 100
 	,ShellDespawn = 30
+----------------------------------------------------------------------------------------------------
+--------------------=[ MCS ]=--------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+	,ForceAimBlur = true				-- Force to use AimBlur. Triggered when aimming with weapons.
+	,WeaponCollisionADS = true			-- Can aim while view model is colliding?
 }
 
 return ServerConfig
