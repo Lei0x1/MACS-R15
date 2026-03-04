@@ -1,20 +1,18 @@
 --[[
-	Holster.lua
-	
+	WeaponHolster.lua
 	Created by @ddydddd9 - Moonlight
+
+	Weapon holster system for managing visible holstered weapons on character models with visibility toggling
 ]]
 
-local Holster = {}
+local RS = game:GetService("ReplicatedStorage")
 
-local WeaponModels
-local Ultil
+local Engine = RS:WaitForChild("ACS_Engine")
+local WeaponModels = Engine:WaitForChild("WeaponModels")
 
-function Holster.Init(weapon_models, ultil)
-	WeaponModels = weapon_models
-	Ultil = ultil
-end
+local WeaponHolster = {}
 
-function Holster.SetVisible(holster_model, visible)
+function WeaponHolster.SetVisible(holster_model, visible)
 	if not holster_model then return end
 	
 	if not visible then
@@ -37,14 +35,7 @@ function Holster.SetVisible(holster_model, visible)
 	end
 end
 
-function Holster.Check(player, weapon_name, weapon_data, weapon_tool)
-	if not player.Character then return end
-	if not player.Character:FindFirstChild("Holster_" .. weapon_name) then
-		Holster.Equip(player, weapon_name, weapon_data, weapon_tool)
-	end
-end
-
-function Holster.Equip(player, weapon_name, weapon_data, weapon_tool)
+local function Equip(player, weapon_name, weapon_data, weapon_tool)
 	local char = player.Character
 	if not char then return end
 
@@ -59,7 +50,6 @@ function Holster.Equip(player, weapon_name, weapon_data, weapon_tool)
 
 	local holster_model = model_check:Clone()
 	holster_model.Name = "Holster_" .. weapon_name
-
 
 	if holster_model:FindFirstChild("Nodes") then
 		holster_model.Nodes:Destroy()
@@ -82,7 +72,7 @@ function Holster.Equip(player, weapon_name, weapon_data, weapon_tool)
 
 	local handle = holster_model:FindFirstChild("Handle")
 	if not handle then
-		warn("Holster model has no Handle part: " .. weapon_name)
+		warn("WeaponHolster model has no Handle part: " .. weapon_name)
 		holster_model:Destroy()
 		return
 	end
@@ -100,21 +90,26 @@ function Holster.Equip(player, weapon_name, weapon_data, weapon_tool)
 		end
 	end
 
-	-- Use a Weld (not WeldConstraint) so we can apply C0 offset
+	-- Use a Weld not WeldConstraint that way we can apply C0 offset
 	local holster_weld = Instance.new("Weld")
 	holster_weld.Name = "HolsterWeld"
 	holster_weld.Part0 = holster_point
 	holster_weld.Part1 = handle
-	holster_weld.C0 = weapon_data.HolsterCFrame  -- your offset goes here
+	holster_weld.C0 = weapon_data.HolsterCFrame
 	holster_weld.C1 = CFrame.new()
 	holster_weld.Parent = holster_model
-
-	-- Unanchor Handle only after weld is in place
 	handle.Anchored = false
 
 	local tool_equipped = char:FindFirstChild(weapon_tool.Name)
-	Holster.SetVisible(holster_model, not tool_equipped)
+	WeaponHolster.SetVisible(holster_model, not tool_equipped)
+end
+
+function WeaponHolster.Check(player, weapon_name, weapon_data, weapon_tool)
+	if not player.Character then return end
+	if not player.Character:FindFirstChild("Holster_" .. weapon_name) then
+		Equip(player, weapon_name, weapon_data, weapon_tool)
+	end
 end
 
 
-return Holster
+return WeaponHolster

@@ -60,16 +60,16 @@ self.MagCheck = function(objs)
 
 end;
 
-self.meleeAttack = function(objs)
+self.MeleeAttackAnim = function(objs)
 	TS:Create(objs[1], TweenInfo.new(.15,Enum.EasingStyle.Sine), {C1 = (CFrame.new(-1,-.65,0) * CFrame.Angles(math.rad(175),math.rad(15),math.rad(-85))):inverse() }):Play()
 	TS:Create(objs[2], TweenInfo.new(.25,Enum.EasingStyle.Sine), {C1 = (CFrame.new(-1,-1,1) * CFrame.Angles(math.rad(0),math.rad(0),math.rad(0))):inverse() }):Play()	
-	wait(.2)
+	task.wait(.2)
 	objs[4].Handle.Swing:Play()
 	TS:Create(objs[1], TweenInfo.new(.25,Enum.EasingStyle.Back), {C1 = (CFrame.new(1.5,-.85,0) * CFrame.Angles(math.rad(180),math.rad(160),math.rad(-85))):inverse() }):Play()
-	wait(.3)
+	task.wait(.3)
 	TS:Create(objs[1], TweenInfo.new(.35,Enum.EasingStyle.Back), {C1 = self.RArmCFrame:Inverse()}):Play()
 	TS:Create(objs[2], TweenInfo.new(.35,Enum.EasingStyle.Back), {C1 = self.LArmCFrame:Inverse()}):Play()
-	wait(.1)
+	task.wait(.1)
 end;
 
 self.GrenadeReady = function(objs)

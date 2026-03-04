@@ -12,7 +12,7 @@ end
 -- Shell physical properties
 EjectionForce.PhysProperties = PhysicalProperties.new(
 	10, -- Density
-	2, -- Friction
+	0.5, -- Friction
 	0.1, -- Elasticity
 	10, -- FrictionWeight
 	1 -- ElasticityWeight

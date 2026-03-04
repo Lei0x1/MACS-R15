@@ -1,16 +1,25 @@
+local RS = game:GetService("ReplicatedStorage")
+
+local Engine = RS:WaitForChild("ACS_Engine")
+local Modules = Engine:WaitForChild("Modules")
+local CoreModules = Modules:WaitForChild("Core")
+
+local ObjectPool = require(CoreModules:WaitForChild("ObjectPool"))
+
 local Utilities = {}
 
-Utilities.Weld = function(p1, p2, c0, c1)
-	local w = Instance.new("Motor6D", p1)
+function Utilities.Weld(p1, p2, c0, c1)
+	local w = Instance.new("Motor6D")
 	w.Part0 = p1
 	w.Part1 = p2
 	w.Name = p2.Name
+	w.Parent = p1
 	w.C0 = c0 or p1.CFrame:inverse() * p2.CFrame
 	w.C1 = c1 or CFrame.new()
 	return w
 end
 
-Utilities.WeldComplex = function(x,y,Name)
+function Utilities.WeldComplex(x,y,Name)
 	local W = Instance.new("Motor6D")
 	W.Name = Name
 	W.Part0 = x
@@ -24,25 +33,34 @@ Utilities.WeldComplex = function(x,y,Name)
 	return W
 end
 
-Utilities.CheckForHumanoid = function(search)
-	local result = false
-	local humanoid = nil
-	if search then
-		if (search.Parent:FindFirstChild("Humanoid") or search.Parent.Parent:FindFirstChild("Humanoid")) then
-			result = true
-			if search.Parent:FindFirstChild('Humanoid') then
-				humanoid = search.Parent.Humanoid
-			elseif search.Parent.Parent:FindFirstChild('Humanoid') then
-				humanoid = search.Parent.Parent.Humanoid
+function Utilities.CheckForHumanoid(hit_part)
+	local has_humanoid = false
+	local target_humanoid = nil
+	if hit_part then
+		if hit_part.Parent:FindFirstChildOfClass("Humanoid" or hit_part.Parent.Parent:FindFirstChildOfClass("Humanoid")) then
+			has_humanoid = true
+			if hit_part.Parent:FindFirstChildOfClass('Humanoid') then
+				target_humanoid = hit_part.Parent:FindFirstChildOfClass('Humanoid')
+			elseif hit_part.Parent.Parent:FindFirstChildOfClass('Humanoid') then
+				target_humanoid = hit_part.Parent.Parent:FindFirstChildOfClass('Humanoid')
 			end
 		else
-			result = false
-		end	
+			has_humanoid = false
+		end
 	end
-	return result,humanoid
+	return has_humanoid, target_humanoid
 end
 
--- @ddydddd9 - Moonlight Safe modulescript loading with validation
+function Utilities.RAND(min, max, accuracy)
+	local inverse = 1 / (accuracy or 1)
+	return (math.random(min * inverse, max * inverse) / inverse)
+end
+
+--================================================================
+-- @ddydddd9 - Moonlight
+--================================================================
+
+-- Safe modulescript loading with validation
 function Utilities.SafeRequire(module_script)
 	if not module_script or not module_script:IsA("ModuleScript") then
 		warn("Invalid module script")
@@ -63,10 +81,28 @@ function Utilities.SafeRequire(module_script)
 	return result
 end
 
--- @ddydddd9 - Moonlight
-function Utilities.RAND(min, max, accuracy)
-	local inverse = 1 / (accuracy or 1)
-	return (math.random(min * inverse, max * inverse) / inverse)
+function Utilities.RegisterPool(pool_name, create_function, reset_function, default_size)
+	pcall(function()
+		ObjectPool.Register(pool_name, create_function, reset_function, default_size)
+	end)
+end
+
+function Utilities.CountDictionary(dictionary)
+	local count = 0
+	for _ in pairs(dictionary) do
+		count += 1
+	end
+
+	return count
+end
+
+function Utilities.Log(message: any)
+	print(string.format("%s", tostring(message)))
+end
+
+function Utilities.LogTagged(title: string, description: string)
+	assert(title and description ~= "string" , "Must be a string")
+	print(string.format("[%s] %s", title, description))
 end
 
 return Utilities

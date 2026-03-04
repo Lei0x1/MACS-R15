@@ -1,5 +1,5 @@
 --[[
-	Security.luau
+	Security.lua
 	
 	Made by @ddydddd9 - Moonlight
 ]]
